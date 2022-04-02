@@ -67,6 +67,9 @@ RegisterNetEvent("qb-bossmenu:server:withdrawMoney", function(amount)
 		TriggerClientEvent('QBCore:Notify', src, "You dont have enough money in the account!", "error")
 	end
 	
+	-- MySQL.Async.execute('UPDATE bossmenu SET amount = ? WHERE job_name = ?', { Accounts[job], job})
+	-- TriggerEvent('qb-log:server:CreateLog', 'bossmenu', 'Withdraw Money', "blue", xPlayer.PlayerData.name.. "Withdrawal $" .. amount .. ' (' .. job .. ')', false)
+	-- TriggerClientEvent('QBCore:Notify', src, "You have withdrawn: $" ..amount, "success")
 	TriggerClientEvent('qb-bossmenu:client:OpenMenu', src)
 end)
 
@@ -85,11 +88,28 @@ RegisterNetEvent("qb-bossmenu:server:depositMoney", function(amount)
 		TriggerClientEvent('QBCore:Notify', src, "You dont have enough money to add!", "error")
 	end
 
+	-- MySQL.Async.execute('UPDATE bossmenu SET amount = ? WHERE job_name = ?', { Accounts[job], job })
+	-- TriggerEvent('qb-log:server:CreateLog', 'bossmenu', 'Deposit Money', "blue", xPlayer.PlayerData.name.. "Deposit $" .. amount .. ' (' .. job .. ')', false)
+	-- TriggerClientEvent('QBCore:Notify', src, "You have deposited: $" ..amount, "success")
 	TriggerClientEvent('qb-bossmenu:client:OpenMenu', src)
 end)
 
-QBCore.Functions.CreateCallback('qb-bossmenu:server:GetAccount', function(source, cb, jobname)
+RegisterNetEvent('qb-bossmenu:server:GetAccountMoney', function(account)
+	local result = exports.oxmysql:executeSync('SELECT * FROM management_funds WHERE job_name LIKE @jobname',{['@jobname'] = account})
+	if result[1] then
+		return result[1].amount
+	else
+		return 0
+	end
+end)
+
+QBCore.Functions.CreateCallback('qb-bossmenu:server:GetAccount', function(source, cb)
+	local src = source
+	local Player = QBCore.Functions.GetPlayer(src)
+	local jobname = Player.PlayerData.job.name
+	print(jobname)
 	local result = GetAccount(jobname)
+	print(result)
 	cb(result)
 end)
 
