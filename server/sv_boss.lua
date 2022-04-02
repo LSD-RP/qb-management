@@ -70,6 +70,7 @@ RegisterNetEvent("qb-bossmenu:server:withdrawMoney", function(amount)
 	-- MySQL.Async.execute('UPDATE bossmenu SET amount = ? WHERE job_name = ?', { Accounts[job], job})
 	-- TriggerEvent('qb-log:server:CreateLog', 'bossmenu', 'Withdraw Money', "blue", xPlayer.PlayerData.name.. "Withdrawal $" .. amount .. ' (' .. job .. ')', false)
 	-- TriggerClientEvent('QBCore:Notify', src, "You have withdrawn: $" ..amount, "success")
+
 	TriggerClientEvent('qb-bossmenu:client:OpenMenu', src)
 end)
 
@@ -128,14 +129,14 @@ QBCore.Functions.CreateCallback('qb-bossmenu:server:GetEmployees', function(sour
 
 			if isOnline then
 				employees[#employees+1] = {
-				empSource = isOnline.PlayerData.citizenid, 
+				empSource = isOnline.PlayerData.citizenid,
 				grade = isOnline.PlayerData.job.grade,
 				isboss = isOnline.PlayerData.job.isboss,
 				name = '🟢 ' .. isOnline.PlayerData.charinfo.firstname .. ' ' .. isOnline.PlayerData.charinfo.lastname
 				}
 			else
 				employees[#employees+1] = {
-				empSource = value.citizenid, 
+				empSource = value.citizenid,
 				grade =  json.decode(value.job).grade,
 				isboss = json.decode(value.job).isboss,
 				name = '❌ ' ..  json.decode(value.charinfo).firstname .. ' ' .. json.decode(value.charinfo).lastname
@@ -158,9 +159,9 @@ RegisterNetEvent('qb-bossmenu:server:GradeUpdate', function(data)
 	if not Player.PlayerData.job.isboss then ExploitBan(src, 'GradeUpdate Exploiting') return end
 
 	if Employee then
-		if Employee.Functions.SetJob(Player.PlayerData.job.name, data.grado) then
+		if Employee.Functions.SetJob(Player.PlayerData.job.name, data.grade) then
 			TriggerClientEvent('QBCore:Notify', src, "Sucessfulluy promoted!", "success")
-			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, "You have been promoted to" ..data.nomegrado..".", "success")
+			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, "You have been promoted to" ..data.gradename..".", "success")
 		else
 			TriggerClientEvent('QBCore:Notify', src, "Promotion grade does not exist.", "error")
 		end
@@ -197,7 +198,7 @@ RegisterNetEvent('qb-bossmenu:server:FireEmployee', function(target)
 			local job = {}
 			job.name = "unemployed"
 			job.label = "Unemployed"
-			job.payment = 500
+			job.payment = QBCore.Shared.Jobs[job.name].grades['0'].payment or 500
 			job.onduty = true
 			job.isboss = false
 			job.grade = {}
