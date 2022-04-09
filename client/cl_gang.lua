@@ -147,8 +147,8 @@ RegisterNetEvent('qb-gangmenu:lient:ManageMember', function(data)
                 event = "qb-gangmenu:server:GradeUpdate",
                 args = {
                     cid = data.player.empSource,
-                    degree = tonumber(k),
-                    named = v.name
+                    grade = tonumber(k),
+                    gradename = v.name
                 }
             }
         }
@@ -316,7 +316,7 @@ CreateThread(function()
                                 inRangeGang = true
                                 if #(pos - coords) <= 1.5 then
                                     nearGangmenu = true
-                                    if not shownGangMenu then 
+                                    if not shownGangMenu then
                                         exports['qb-core']:DrawText('[E] Open Gang Management', 'left')
                                     end
 
@@ -325,7 +325,7 @@ CreateThread(function()
                                         TriggerEvent("qb-gangmenu:client:OpenMenu")
                                     end
                                 end
-                                
+
                                 if not nearGangmenu and shownGangMenu then
                                     CloseMenuFullGang()
                                     shownGangMenu = false
