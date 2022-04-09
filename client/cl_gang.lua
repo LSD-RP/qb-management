@@ -276,9 +276,11 @@ end)
 -- MAIN THREAD
 
 CreateThread(function()
-    if Config.UseTarget then
+    -- if Config.UseTarget then
+    if false then
         for gang, zones in pairs(Config.GangMenuZones) do
             for index, data in ipairs(zones) do
+                print("create zone")
                 exports['qb-target']:AddBoxZone(gang.."-GangMenu"..index, data.coords, data.length, data.width, {
                     name = gang.."-GangMenu"..index,
                     heading = data.heading,

@@ -5,7 +5,12 @@ description 'qb-bossmenu'
 version '2.0.0'
 
 client_scripts {
-    'client/*.lua'
+    'client/*.lua',
+    '@PolyZone/client.lua',
+    '@PolyZone/BoxZone.lua',
+    '@PolyZone/EntityZone.lua',
+    '@PolyZone/CircleZone.lua',
+    '@PolyZone/ComboZone.lua',
 }
 
 server_scripts {

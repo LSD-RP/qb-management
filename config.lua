@@ -20,3 +20,4 @@ Config.Gangs = {
     ['cartel'] = vector3(0, 0, 0),
     ['families'] = vector3(0, 0, 0)
 }
+

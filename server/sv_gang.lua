@@ -123,7 +123,7 @@ RegisterNetEvent('qb-gangmenu:server:GradeUpdate', function(data)
 	if Employee then
 		if Employee.Functions.SetGang(Player.PlayerData.gang.name, data.grade) then
 			TriggerClientEvent('QBCore:Notify', src, "Successfully promoted!", "success")
-			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, "You have been promoted to " ..data.gradename..".", "success")
+			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, "You have been promoted to " ..data.grade.name..".", "success")
 		else
 			TriggerClientEvent('QBCore:Notify', src, "Grade does not exist.", "error")
 		end
