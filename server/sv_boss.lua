@@ -124,7 +124,7 @@ QBCore.Functions.CreateCallback('qb-bossmenu:server:GetEmployees', function(sour
 	if not Player.PlayerData.job.isboss then ExploitBan(src, 'GetEmployees Exploiting') return end
 
 	local employees = {}
-	local players = MySQL.Sync.fetchAll("SELECT * FROM `players` WHERE `job` LIKE '%".. jobname .."%'", {})
+	local players = MySQL.Sync.fetchAll("SELECT * FROM `user_jobs` WHERE `job` LIKE '%".. jobname .."%'", {})
 	if players[1] ~= nil then
 		for key, value in pairs(players) do
 			local isOnline = QBCore.Functions.GetPlayerByCitizenId(value.citizenid)
@@ -137,17 +137,27 @@ QBCore.Functions.CreateCallback('qb-bossmenu:server:GetEmployees', function(sour
 				name = '🟢 ' .. isOnline.PlayerData.charinfo.firstname .. ' ' .. isOnline.PlayerData.charinfo.lastname
 				}
 			else
-				employees[#employees+1] = {
-				empSource = value.citizenid,
-				grade =  json.decode(value.job).grade,
-				isboss = json.decode(value.job).isboss,
-				name = '❌ ' ..  json.decode(value.charinfo).firstname .. ' ' .. json.decode(value.charinfo).lastname
-				}
+				local result = exports.oxmysql:executeSync("SELECT * FROM `players` WHERE `citizenid` LIKE @citizenid", {
+					['@citizenid'] = value.citizenid
+				})
+				if result[1] then
+					local personName = json.decode(result[1].charinfo).firstname .. ' ' .. json.decode(result[1].charinfo).lastname
+					employees[#employees+1] = {
+					empSource = value.citizenid,
+					empJob = value.job,
+					-- grade =  json.decode(value.job).grade,
+					grade = value.grade,
+					-- isboss = json.decode(value.job).isboss,
+					name = '❌ ' .. personName
+					-- name = '❌ ' ..  json.decode(value.charinfo).firstname .. ' ' .. json.decode(value.charinfo).lastname
+					}
+				end
+				
 			end
 		end
-		table.sort(employees, function(a, b)
-            return a.grade.level > b.grade.level
-        end)
+		-- table.sort(employees, function(a, b)
+        --     return a.grade.level > b.grade.level
+        -- end)
 	end
 	cb(employees)
 end)
@@ -207,8 +217,11 @@ RegisterNetEvent('qb-bossmenu:server:FireEmployee', function(target)
 			job.grade.name = nil
 			job.grade.level = 0
 			MySQL.Async.execute('UPDATE players SET job = ? WHERE citizenid = ?', { json.encode(job), target })
+			exports.oxmysql:execute('UPDATE user_jobs SET job = ?, grade = ? WHERE citizenid = ?', {
+				'unemployed', 0, target
+			})
 			TriggerClientEvent('QBCore:Notify', src, "Employee fired!", "success")
-			TriggerEvent("qb-log:server:CreateLog", "bossmenu", "Job Fire", "red", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. " " .. Employee.PlayerData.charinfo.lastname .. " (" .. Player.PlayerData.job.name .. ")", false)
+			TriggerEvent("qb-log:server:CreateLog", "bossmenu", "Job Fire", "red", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. target .. " (" .. Player.PlayerData.job.name .. ")", false)
 		else
 			TriggerClientEvent('QBCore:Notify', src, "Civilian not in city.", "error")
 		end

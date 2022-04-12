@@ -98,7 +98,7 @@ RegisterNetEvent('qb-bossmenu:client:employeelist', function()
         for _, v in pairs(cb) do
             EmployeesMenu[#EmployeesMenu + 1] = {
                 header = v.name,
-                txt = v.grade.name,
+                -- txt = v.grade.name,
                 params = {
                     event = "qb-bossmenu:client:ManageEmployee",
                     args = {
@@ -140,6 +140,9 @@ RegisterNetEvent('qb-bossmenu:client:ManageEmployee', function(data)
             }
         }
     end
+    -- table.sort(EmployeeMenu, function(a, b)
+    --     return string.sub(a.txt, 1, 6) > string.sub(b.txt, 1, 6)
+    -- end)
     EmployeeMenu[#EmployeeMenu + 1] = {
         header = "Fire Employee",
         params = {
